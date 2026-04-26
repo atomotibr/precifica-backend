@@ -6,11 +6,13 @@ const app = express();
 app.use(express.json());
 
 // 🔥 CONEXÃO COM BANCO (Railway usa variável DATABASE_URL)
+const { Pool } = require("pg");
+
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
-    rejectUnauthorized: false,
-  },
+    rejectUnauthorized: false
+  }
 });
 
 // ✅ TESTE API
