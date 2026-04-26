@@ -1,14 +1,16 @@
 require("dotenv").config();
+
 const express = require("express");
 const cors = require("cors");
 const { Pool } = require("pg");
 
 const app = express();
-app.use(cors());
-app.use(express.json());
 
-import pkg from 'pg';
-const { Pool } = pkg;
+app.use(cors({
+  origin: "*"
+}));
+
+app.use(express.json());
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -22,19 +24,33 @@ app.get("/", (req, res) => {
 });
 
 app.get("/produtos", async (req, res) => {
-  const result = await pool.query("SELECT * FROM produtos");
-  res.json(result.rows);
+  try {
+    const result = await pool.query("SELECT * FROM produtos");
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Erro ao buscar produtos");
+  }
 });
 
 app.post("/produtos", async (req, res) => {
-  const { nome, categoria, preco_loja } = req.body;
+  try {
+    const { nome, categoria, preco_loja } = req.body;
 
-  await pool.query(
-    "INSERT INTO produtos(nome, categoria, preco_loja) VALUES($1,$2,$3)",
-    [nome, categoria, preco_loja]
-  );
+    await pool.query(
+      "INSERT INTO produtos(nome, categoria, preco_loja) VALUES($1,$2,$3)",
+      [nome, categoria, preco_loja]
+    );
 
-  res.send("Produto criado");
+    res.send("Produto criado");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Erro ao criar produto");
+  }
 });
 
-app.listen(3000, () => console.log("Servidor rodando na porta 3000"));
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log("Servidor rodando na porta", PORT);
+});
