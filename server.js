@@ -19,10 +19,10 @@ app.get("/", (req, res) => {
   res.send("Precifica API rodando 🚀");
 });
 
-app.get("/produtos", async (req, res) => {
+app.get("/teste", async (req, res) => {
   try {
-    const result = await pool.query("SELECT * FROM produtos");
-    res.json(result.rows);
+    const result = await pool.query("SELECT 1");
+    res.json({ ok: true });
   } catch (err) {
     console.error(err);
     res.status(500).json({ erro: err.message });
