@@ -29,7 +29,7 @@ app.get("/produtos", async (req, res) => {
     res.json(result.rows);
   } catch (err) {
     console.error(err);
-    res.status(500).send("Erro ao buscar produtos");
+    res.status(500).send(err.message);
   }
 });
 
@@ -45,7 +45,7 @@ app.post("/produtos", async (req, res) => {
     res.send("Produto criado");
   } catch (err) {
     console.error(err);
-    res.status(500).send("Erro ao criar produto");
+    res.status(500).send(err.message);
   }
 });
 
