@@ -5,11 +5,7 @@ const cors = require("cors");
 const { Pool } = require("pg");
 
 const app = express();
-
-app.use(cors({
-  origin: "*"
-}));
-
+app.use(cors());
 app.use(express.json());
 
 const pool = new Pool({
@@ -29,7 +25,7 @@ app.get("/produtos", async (req, res) => {
     res.json(result.rows);
   } catch (err) {
     console.error(err);
-    res.status(500).send(err.message);
+    res.status(500).json({ erro: err.message });
   }
 });
 
@@ -38,19 +34,16 @@ app.post("/produtos", async (req, res) => {
     const { nome, categoria, preco_loja } = req.body;
 
     await pool.query(
-      "INSERT INTO produtos(nome, categoria, preco_loja) VALUES($1,$2,$3)",
+      "INSERT INTO produtos (nome, categoria, preco_loja) VALUES ($1, $2, $3)",
       [nome, categoria, preco_loja]
     );
 
     res.send("Produto criado");
   } catch (err) {
     console.error(err);
-    res.status(500).send(err.message);
+    res.status(500).json({ erro: err.message });
   }
 });
 
 const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-  console.log("Servidor rodando na porta", PORT);
-});
+app.listen(PORT, () => console.log("Servidor rodando na porta", PORT));
